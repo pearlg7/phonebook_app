@@ -1,3 +1,4 @@
+# imports 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import uuid 
@@ -20,12 +21,12 @@ def load_user(user_id):
 class User(db.Model, UserMixin):
     id = db.Column(db.String, primary_key=True)
     first_name = db.Column(db.String(150), nullable=True, default='')
-    last_name = db.Column(db.String(150), nullable =True, default='')
-    email = db.Column(db.String(150), nullable =False)
-    password = db.Column(db.String, nullable=True, default= '')
-    g_auth_verify = db.Column(db.Boolean, default=False)
-    token = db.Column(db.String, default='', unique=True)
-    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    last_name = db.Column(db.String(150), nullable = True, default = '')
+    email = db.Column(db.String(150), nullable = False)
+    password = db.Column(db.String, nullable = True, default = '')
+    g_auth_verify = db.Column(db.Boolean, default = False)
+    token = db.Column(db.String, default = '', unique = True )
+    date_created = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
 
     def __init__(self, email, first_name='', last_name='', password='', token='', g_auth_verify=False):
         self.id = self.set_id()
@@ -49,29 +50,32 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'User {self.email} has been added to the database'
 
-class Car(db.Model):
-    vin = db.Column(db.String(17), primary_key = True)
-    make = db.Column(db.String(150), nullable = False)
-    model = db.Column(db.String(150))
-    year = db.Column(db.String(4))
+class Contact(db.Model):
+    id = db.Column(db.String, primary_key = True)
+    name = db.Column(db.String(150), nullable = False)
+    email = db.Column(db.String(200))
+    phone_number = db.Column(db.String(20))
+    address = db.Column(db.String(200))
     user_token = db.Column(db.String, db.ForeignKey('user.token'), nullable = False)
 
-    def __init__(self, vin, make, model, year, user_token, id= ''):
-        self.vin = vin
-        self.make = make
-        self.model = model
-        self.year = year
+    def __init__(self,name,email,phone_number,address,user_token, id = ''):
+        self.id = self.set_id()
+        self.name = name
+        self.email = email
+        self.phone_number = phone_number
+        self.address = address
         self.user_token = user_token
 
+
     def __repr__(self):
-        return f'The following car has been added to the car inventory: {self.car}'
+        return f'The following contact has been added to the phonebook: {self.name}'
 
     def set_id(self):
         return (secrets.token_urlsafe())
 
-class CarSchema(ma.Schema):
+class ContactSchema(ma.Schema):
     class Meta:
-        fields = ['vin', 'make','model','year', 'user_token']
+        fields = ['id', 'name','email','phone_number', 'address']
 
-car_schema = CarSchema()
-cars_schema = CarSchema(many=True)
+contact_schema = ContactSchema()
+contacts_schema = ContactSchema(many=True)
